@@ -1,0 +1,87 @@
+.app {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+header {
+  margin-bottom: 1rem;
+}
+
+h1 {
+  margin-bottom: 0.3rem;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+
+.panel {
+  display: grid;
+  gap: 0.9rem;
+  background: #fff;
+  border: 1px solid #dbe0e6;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+input,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+textarea {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #c7cfd8;
+}
+
+textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.experience-card {
+  display: grid;
+  gap: 0.45rem;
+  border: 1px solid #dbe0e6;
+  border-radius: 6px;
+  padding: 0.7rem;
+}
+
+button {
+  width: fit-content;
+  border: none;
+  background: #0f62fe;
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.55rem 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #687787;
+}
+
+.error {
+  color: #be2222;
+}
+
+.video-preview {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #c7cfd8;
+}
