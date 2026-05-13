@@ -64,7 +64,10 @@ npm run dev
 
 ## Contribution (Open Source)
 
-Les contributions sont bienvenues 🎉
+Le projet est préparé pour une ouverture open source, mais **aucune licence n'est encore publiée**.
+Pour accepter des contributions externes en toute clarté juridique, commencez par ajouter un fichier `LICENSE`.
+
+Une fois la licence ajoutée, les contributions seront bienvenues 🎉
 
 1. Forkez le dépôt
 2. Créez une branche (`feature/ma-feature`)
@@ -82,4 +85,4 @@ Les contributions sont bienvenues 🎉
 ## Licence
 
 Aucune licence n'est encore définie dans ce dépôt.  
-Si vous souhaitez l'ouvrir davantage à la communauté, ajoutez un fichier `LICENSE` (ex: MIT).
+Ajoutez un fichier `LICENSE` (ex: MIT) avant d'ouvrir les contributions externes.
