@@ -13,8 +13,8 @@
   --color-danger: #DC2626;
   --color-danger-bg: #FEF2F2;
   --color-sidebar-bg: #FFFFFF;
-  --color-sidebar-width: 220px;
-  --color-topbar-height: 56px;
+  --sidebar-width: 220px;
+  --topbar-height: 56px;
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
@@ -63,7 +63,7 @@ a:hover {
 
 /* ── Sidebar ───────────────────────────────────────────── */
 .sidebar {
-  width: var(--color-sidebar-width);
+  width: var(--sidebar-width);
   background: var(--color-sidebar-bg);
   border-right: 1px solid var(--color-border);
   display: flex;
@@ -145,7 +145,7 @@ a:hover {
 
 /* ── Top bar ───────────────────────────────────────────── */
 .app-topbar {
-  height: var(--color-topbar-height);
+  height: var(--topbar-height);
   border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
@@ -701,6 +701,12 @@ a:hover {
   background: var(--color-danger-bg);
 }
 
+.video-upload-error {
+  color: var(--color-danger);
+  font-size: 12.5px;
+  margin: 4px 0 0;
+}
+
 .video-upload-input {
   display: none;
 }
@@ -990,7 +996,7 @@ a:hover {
   display: grid;
   grid-template-columns: 2fr 3fr;
   gap: 0;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - var(--topbar-height));
 }
 
 .preview-left {

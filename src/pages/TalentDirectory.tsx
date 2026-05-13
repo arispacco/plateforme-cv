@@ -46,7 +46,7 @@ export function TalentDirectory() {
           <Search size={16} className="directory-search-icon" />
           <input
             className="directory-search"
-            placeholder="Search candidates by name, skills, location..."
+            placeholder="Search by name, job title, or skills..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);

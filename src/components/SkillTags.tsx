@@ -26,9 +26,9 @@ const TAG_TEXT_COLORS = [
 function getTagColor(skill: string): { bg: string; color: string } {
   let hash = 0;
   for (let i = 0; i < skill.length; i++) {
-    hash = (hash * 31 + skill.charCodeAt(i)) & 0xffff;
+    hash = ((hash * 31) + skill.charCodeAt(i)) | 0;
   }
-  const idx = hash % TAG_COLORS.length;
+  const idx = Math.abs(hash) % TAG_COLORS.length;
   return { bg: TAG_COLORS[idx], color: TAG_TEXT_COLORS[idx] };
 }
 

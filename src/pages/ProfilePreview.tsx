@@ -178,10 +178,13 @@ export function ProfilePreview() {
                     {profile.experiences.map((exp) => (
                       <div key={exp.id} className="preview-timeline-item">
                         <div className="preview-timeline-date">
-                          <span>{exp.startDate || '—'}</span>
-                          <span className="preview-timeline-date-range">
-                            {exp.startDate && exp.endDate ? `${exp.startDate} – ${exp.endDate}` : exp.endDate ?? 'Present'}
-                          </span>
+                          {exp.startDate && exp.endDate ? (
+                            <span>{exp.startDate} – {exp.endDate}</span>
+                          ) : exp.startDate ? (
+                            <span>{exp.startDate} – Present</span>
+                          ) : (
+                            <span>{exp.endDate ?? '—'}</span>
+                          )}
                         </div>
                         <div className="preview-timeline-content">
                           <div className="preview-timeline-dot" />
