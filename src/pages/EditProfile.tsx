@@ -23,7 +23,7 @@ const createEmptyProject = (): Project => ({
   featured: false,
 });
 
-const emptyProfile: CandidateProfile = {
+const createEmptyProfile = (): CandidateProfile => ({
   fullName: '',
   jobTitle: '',
   bio: '',
@@ -33,12 +33,12 @@ const emptyProfile: CandidateProfile = {
   skills: [],
   experiences: [createEmptyExperience()],
   projects: [],
-};
+});
 
 export function EditProfile() {
   const { id } = useParams<{ id?: string }>();
   const navigate = useNavigate();
-  const [draft, setDraft] = useState<CandidateProfile>(emptyProfile);
+  const [draft, setDraft] = useState<CandidateProfile>(createEmptyProfile);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,8 +50,6 @@ export function EditProfile() {
         let profile: CandidateProfile | undefined;
         if (id) {
           profile = await cvService.getCandidateProfileById(Number(id));
-        } else {
-          profile = await cvService.getLatestCandidateProfile();
         }
         if (profile) {
           setDraft({
@@ -59,6 +57,8 @@ export function EditProfile() {
             experiences: profile.experiences.length ? profile.experiences : [createEmptyExperience()],
             projects: profile.projects ?? [],
           });
+        } else {
+          setDraft(createEmptyProfile());
         }
       } catch {
         setError('Unable to load profile.');

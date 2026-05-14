@@ -7,14 +7,14 @@ L'application est construite avec **React + TypeScript** et stocke les données 
 
 Ce projet vise à proposer une base simple et moderne pour :
 
-- gérer un profil candidat en local ;
+- gérer plusieurs profils candidats en local ;
 - structurer les expériences professionnelles ;
 - ajouter une vidéo de présentation (V-Pitch) ;
 - prévisualiser rapidement le rendu du profil.
 
 ## Fonctionnalités actuelles
 
-- Édition d'un profil (nom, poste, compétences) ;
+- Édition de profils (nom, poste, compétences) ;
 - Gestion d'une liste d'expériences ;
 - Upload local d'une vidéo de présentation ;
 - Sauvegarde locale dans le navigateur (IndexedDB) ;
