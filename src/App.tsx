@@ -1,5 +1,5 @@
 import { Bell } from 'lucide-react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import { Sidebar } from './components/Sidebar';
 import { TalentDirectory } from './pages/TalentDirectory';
@@ -21,12 +21,15 @@ function App() {
           <header className="app-topbar">
             <div className="app-topbar-left">
               <nav className="app-topnav">
-                <a href="/" className={location.pathname === '/' ? 'topnav-link topnav-link--active' : 'topnav-link'}>
+                <NavLink to="/" className={({ isActive }) => (isActive ? 'topnav-link topnav-link--active' : 'topnav-link')} end>
                   Dashboard
-                </a>
-                <a href="/directory" className={location.pathname === '/directory' ? 'topnav-link topnav-link--active' : 'topnav-link'}>
+                </NavLink>
+                <NavLink to="/directory" className={({ isActive }) => (isActive ? 'topnav-link topnav-link--active' : 'topnav-link')}>
                   Directory
-                </a>
+                </NavLink>
+                <NavLink to="/edit" className={({ isActive }) => (isActive ? 'topnav-link topnav-link--active' : 'topnav-link')}>
+                  New Profile
+                </NavLink>
               </nav>
             </div>
             <div className="app-topbar-right">
@@ -55,4 +58,3 @@ function App() {
 }
 
 export default App;
-
