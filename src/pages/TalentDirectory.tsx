@@ -1,18 +1,191 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Map, Download, Search, ChevronDown } from 'lucide-react';
+import { Plus, MapPin, Briefcase, Download, Search, ChevronDown, Clock, Star, ExternalLink } from 'lucide-react';
 import { cvService } from '../services/cvService';
 import type { CandidateProfile } from '../types/cv';
-import { CandidateCard } from '../components/CandidateCard';
+import { SkillBadge } from '../components/SkillTags';
 
-const PAGE_SIZE = 8;
+function FeedItem({ profile }: { profile: CandidateProfile }) {
+  const photoUrl = useMemo(() => {
+    if (!profile.photoBlob) return undefined;
+    return URL.createObjectURL(profile.photoBlob);
+  }, [profile.photoBlob]);
+
+  const mediaItems = useMemo(() => {
+    const items = [...(profile.mediaPosts ?? [])];
+    if (profile.vPitchBlob) {
+      items.unshift({
+        id: 'legacy-vpitch',
+        type: 'video',
+        caption: 'Video pitch',
+        blob: profile.vPitchBlob,
+      });
+    }
+    return items.filter((item) => item.type === 'text' || item.blob);
+  }, [profile.mediaPosts, profile.vPitchBlob]);
+
+  const mediaUrls = useMemo(
+    () => mediaItems.map((item) => (item.blob ? URL.createObjectURL(item.blob) : undefined)),
+    [mediaItems],
+  );
+
+  const projectImageUrls = useMemo(
+    () => (profile.projects ?? []).map((project) => (project.screenshotBlob ? URL.createObjectURL(project.screenshotBlob) : undefined)),
+    [profile.projects],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (photoUrl) URL.revokeObjectURL(photoUrl);
+      mediaUrls.forEach((url) => {
+        if (url) URL.revokeObjectURL(url);
+      });
+      projectImageUrls.forEach((url) => {
+        if (url) URL.revokeObjectURL(url);
+      });
+    };
+  }, [photoUrl, mediaUrls, projectImageUrls]);
+
+  const initials = profile.fullName
+    .split(' ')
+    .map((name) => name[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
+  return (
+    <article className="feed-card">
+      <header className="feed-card-header">
+        <div className="feed-card-avatar">
+          {photoUrl ? <img src={photoUrl} alt={profile.fullName} className="feed-card-photo" /> : <span>{initials || '?'}</span>}
+        </div>
+        <div className="feed-card-identity">
+          <h2 className="feed-card-name">{profile.fullName || 'Unnamed'}</h2>
+          <p className="feed-card-title">{profile.jobTitle || 'No title'}</p>
+        </div>
+      </header>
+
+      {(profile.location || profile.availability || profile.rating !== undefined) && (
+        <div className="feed-meta-row">
+          {profile.location && (
+            <span className="feed-meta-item">
+              <MapPin size={13} />
+              {profile.location}
+            </span>
+          )}
+          {profile.availability && (
+            <span className="feed-meta-item">
+              <Clock size={13} />
+              {profile.availability}
+            </span>
+          )}
+          {profile.rating !== undefined && (
+            <span className="feed-meta-item feed-meta-item--rating">
+              <Star size={13} fill="currentColor" />
+              {profile.rating.toFixed(1)}
+            </span>
+          )}
+        </div>
+      )}
+
+      {profile.bio && <p className="feed-bio">{profile.bio}</p>}
+
+      {mediaItems.length > 0 && (
+        <section className="feed-section">
+          <h3 className="feed-section-title">V-Pitch Updates</h3>
+          <div className="feed-media-strip">
+            {mediaItems.map((item, index) => (
+              <div key={item.id} className="feed-media-item">
+                {item.type === 'video' && mediaUrls[index] && (
+                  <video controls src={mediaUrls[index]} className="feed-media-visual" />
+                )}
+                {item.type === 'image' && mediaUrls[index] && (
+                  <img src={mediaUrls[index]} alt={item.caption ?? profile.fullName} className="feed-media-visual" />
+                )}
+                {item.type === 'text' && (
+                  <div className="feed-media-text">
+                    <p>{item.text ?? 'No text content.'}</p>
+                  </div>
+                )}
+                {item.caption && <p className="feed-media-caption">{item.caption}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {(profile.projects ?? []).length > 0 && (
+        <section className="feed-section">
+          <h3 className="feed-section-title">Portfolio</h3>
+          <div className="feed-project-list">
+            {(profile.projects ?? []).map((project, index) => (
+              <article key={project.id} className="feed-project-card">
+                {projectImageUrls[index] && (
+                  <img src={projectImageUrls[index]} alt={project.title} className="feed-project-image" />
+                )}
+                <div className="feed-project-content">
+                  <div className="feed-project-row">
+                    <h4 className="feed-project-title">{project.title || 'Untitled project'}</h4>
+                    {project.featured && <span className="feed-project-featured">Featured</span>}
+                  </div>
+                  <p className="feed-project-description">{project.description || 'No description yet.'}</p>
+                  {project.link && (
+                    <a href={project.link} target="_blank" rel="noopener noreferrer" className="feed-project-link">
+                      <ExternalLink size={12} />
+                      Open project
+                    </a>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {profile.skills.length > 0 && (
+        <section className="feed-section">
+          <h3 className="feed-section-title">Skills</h3>
+          <div className="feed-skills-wrap">
+            {profile.skills.map((skill) => (
+              <SkillBadge key={`${profile.id ?? profile.fullName}-${skill}`} skill={skill} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {profile.experiences.length > 0 && (
+        <section className="feed-section">
+          <h3 className="feed-section-title">Experience</h3>
+          <div className="feed-experience-list">
+            {profile.experiences.map((experience) => (
+              <article key={experience.id} className="feed-experience-item">
+                <div className="feed-experience-header">
+                  <h4>
+                    <Briefcase size={13} />
+                    <span>{experience.title || 'Role'}</span>
+                  </h4>
+                  <span>{experience.company || 'Company'}</span>
+                </div>
+                {(experience.startDate || experience.endDate) && (
+                  <p className="feed-experience-dates">
+                    {experience.startDate || '—'} - {experience.endDate || 'Present'}
+                  </p>
+                )}
+                {experience.description && <p className="feed-experience-description">{experience.description}</p>}
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+    </article>
+  );
+}
 
 export function TalentDirectory() {
   const [profiles, setProfiles] = useState<CandidateProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [skillFilter, setSkillFilter] = useState('');
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     cvService
@@ -36,11 +209,8 @@ export function TalentDirectory() {
     return matchesSearch && matchesSkill;
   });
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
   return (
-    <div className="directory-page">
+    <div className="directory-page directory-page--feed">
       <div className="directory-topbar">
         <div className="directory-search-wrap">
           <Search size={16} className="directory-search-icon" />
@@ -50,7 +220,6 @@ export function TalentDirectory() {
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              setPage(1);
             }}
           />
         </div>
@@ -62,7 +231,6 @@ export function TalentDirectory() {
               value={skillFilter}
               onChange={(e) => {
                 setSkillFilter(e.target.value);
-                setPage(1);
               }}
             >
               <option value="">Filter by Skills</option>
@@ -79,21 +247,17 @@ export function TalentDirectory() {
 
       <div className="directory-header">
         <div>
-          <h1 className="directory-title">Talent Directory</h1>
+          <h1 className="directory-title">Home Feed</h1>
           <p className="directory-subtitle">
-            {isLoading ? 'Loading…' : `${filtered.length} professional${filtered.length !== 1 ? 's' : ''}`}
+            {isLoading ? 'Loading…' : `${filtered.length} profile update${filtered.length !== 1 ? 's' : ''}`}
           </p>
         </div>
 
         <div className="directory-actions">
           <Link to="/edit" className="btn btn--primary">
             <Plus size={16} />
-            Add Talent
+            Update Profile
           </Link>
-          <button type="button" className="btn btn--outline">
-            <Map size={16} />
-            View Map
-          </button>
           <button type="button" className="btn btn--outline">
             <Download size={16} />
             Export
@@ -103,51 +267,18 @@ export function TalentDirectory() {
 
       {isLoading ? (
         <p className="directory-empty">Loading profiles…</p>
-      ) : paginated.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <div className="directory-empty-state">
-          <p>No candidates found.</p>
+          <p>No profile updates found.</p>
           <Link to="/edit" className="btn btn--primary">
             <Plus size={16} /> Add your first profile
           </Link>
         </div>
       ) : (
-        <div className="directory-grid">
-          {paginated.map((profile) => (
-            <CandidateCard key={profile.id} profile={profile} />
+        <div className="feed-list">
+          {filtered.map((profile) => (
+            <FeedItem key={profile.id} profile={profile} />
           ))}
-        </div>
-      )}
-
-      {totalPages > 1 && (
-        <div className="directory-pagination">
-          {page > 1 && (
-            <button
-              type="button"
-              className="page-btn"
-              onClick={() => setPage((p) => p - 1)}
-            >
-              Prev
-            </button>
-          )}
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <button
-              key={p}
-              type="button"
-              className={`page-btn ${p === page ? 'page-btn--active' : ''}`}
-              onClick={() => setPage(p)}
-            >
-              {p}
-            </button>
-          ))}
-          {page < totalPages && (
-            <button
-              type="button"
-              className="page-btn"
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Next
-            </button>
-          )}
         </div>
       )}
     </div>

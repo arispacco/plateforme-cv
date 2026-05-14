@@ -13,6 +13,15 @@ export interface Project {
   description: string;
   featured?: boolean;
   link?: string;
+  screenshotBlob?: Blob;
+}
+
+export interface MediaPost {
+  id: string;
+  type: 'video' | 'image' | 'text';
+  caption?: string;
+  text?: string;
+  blob?: Blob;
 }
 
 export interface CandidateProfile {
@@ -26,6 +35,7 @@ export interface CandidateProfile {
   skills: string[];
   experiences: Experience[];
   projects?: Project[];
+  mediaPosts?: MediaPost[];
   photoBlob?: Blob;
   vPitchBlob?: Blob;
 }

@@ -9,6 +9,17 @@ class CVDatabase extends Dexie {
     this.version(1).stores({
       candidateProfiles: '++id,fullName,jobTitle',
     });
+    this.version(2)
+      .stores({
+        candidateProfiles: '++id,fullName,jobTitle',
+      })
+      .upgrade(async (tx) => {
+        await tx.table<CandidateProfile, number>('candidateProfiles').toCollection().modify((profile) => {
+          if (!profile.mediaPosts) {
+            profile.mediaPosts = [];
+          }
+        });
+      });
   }
 }
 
