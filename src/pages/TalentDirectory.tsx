@@ -21,7 +21,7 @@ function FeedItem({ profile }: { profile: CandidateProfile }) {
         blob: profile.vPitchBlob,
       });
     }
-    return items.filter((item) => (item.type === 'text' ? Boolean(item.text.trim()) : Boolean(item.blob)));
+    return items.filter((item) => (item.type === 'text' ? Boolean(item.text?.trim()) : Boolean(item.blob)));
   }, [profile.id, profile.mediaPosts, profile.vPitchBlob]);
 
   const mediaUrls = useMemo(
