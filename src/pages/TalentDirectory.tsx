@@ -15,17 +15,21 @@ function FeedItem({ profile }: { profile: CandidateProfile }) {
     const items = [...(profile.mediaPosts ?? [])];
     if (profile.vPitchBlob) {
       items.unshift({
-        id: 'legacy-vpitch',
+        id: `__legacy_vpitch_${profile.id ?? 'unsaved'}`,
         type: 'video',
         caption: 'Video pitch',
         blob: profile.vPitchBlob,
       });
     }
-    return items.filter((item) => item.type === 'text' || item.blob);
-  }, [profile.mediaPosts, profile.vPitchBlob]);
+    return items.filter((item) => (item.type === 'text' ? true : Boolean(item.blob)));
+  }, [profile.id, profile.mediaPosts, profile.vPitchBlob]);
 
   const mediaUrls = useMemo(
-    () => mediaItems.map((item) => (item.blob ? URL.createObjectURL(item.blob) : undefined)),
+    () =>
+      mediaItems.map((item) => {
+        if (item.type === 'text') return undefined;
+        return URL.createObjectURL(item.blob);
+      }),
     [mediaItems],
   );
 
@@ -146,8 +150,8 @@ function FeedItem({ profile }: { profile: CandidateProfile }) {
         <section className="feed-section">
           <h3 className="feed-section-title">Skills</h3>
           <div className="feed-skills-wrap">
-            {profile.skills.map((skill) => (
-              <SkillBadge key={`${profile.id ?? profile.fullName}-${skill}`} skill={skill} />
+            {profile.skills.map((skill, index) => (
+              <SkillBadge key={`${profile.id ?? 'profile'}-${skill}-${index}`} skill={skill} />
             ))}
           </div>
         </section>

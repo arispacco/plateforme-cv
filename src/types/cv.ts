@@ -16,13 +16,28 @@ export interface Project {
   screenshotBlob?: Blob;
 }
 
-export interface MediaPost {
+export interface VideoMediaPost {
   id: string;
-  type: 'video' | 'image' | 'text';
+  type: 'video';
   caption?: string;
-  text?: string;
-  blob?: Blob;
+  blob: Blob;
 }
+
+export interface ImageMediaPost {
+  id: string;
+  type: 'image';
+  caption?: string;
+  blob: Blob;
+}
+
+export interface TextMediaPost {
+  id: string;
+  type: 'text';
+  caption?: string;
+  text: string;
+}
+
+export type MediaPost = VideoMediaPost | ImageMediaPost | TextMediaPost;
 
 export interface CandidateProfile {
   id?: number; // Primary key, auto-incremented by Dexie
