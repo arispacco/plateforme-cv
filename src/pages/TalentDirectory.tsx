@@ -108,7 +108,7 @@ function FeedItem({ profile }: { profile: CandidateProfile }) {
                 )}
                 {item.type === 'text' && (
                   <div className="feed-media-text">
-                    <p>{item.text ?? 'No text content.'}</p>
+                    <p>{item.text}</p>
                   </div>
                 )}
                 {item.caption && <p className="feed-media-caption">{item.caption}</p>}
