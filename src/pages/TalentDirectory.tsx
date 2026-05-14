@@ -21,7 +21,7 @@ function FeedItem({ profile }: { profile: CandidateProfile }) {
         blob: profile.vPitchBlob,
       });
     }
-    return items.filter((item) => (item.type === 'text' ? true : Boolean(item.blob)));
+    return items.filter((item) => (item.type === 'text' ? Boolean(item.text.trim()) : Boolean(item.blob)));
   }, [profile.id, profile.mediaPosts, profile.vPitchBlob]);
 
   const mediaUrls = useMemo(
@@ -104,7 +104,7 @@ function FeedItem({ profile }: { profile: CandidateProfile }) {
                   <video controls src={mediaUrls[index]} className="feed-media-visual" />
                 )}
                 {item.type === 'image' && mediaUrls[index] && (
-                  <img src={mediaUrls[index]} alt={item.caption ?? profile.fullName} className="feed-media-visual" />
+                  <img src={mediaUrls[index]} alt={item.caption ?? `${profile.fullName}'s media post`} className="feed-media-visual" />
                 )}
                 {item.type === 'text' && (
                   <div className="feed-media-text">
@@ -125,7 +125,7 @@ function FeedItem({ profile }: { profile: CandidateProfile }) {
             {(profile.projects ?? []).map((project, index) => (
               <article key={project.id} className="feed-project-card">
                 {projectImageUrls[index] && (
-                  <img src={projectImageUrls[index]} alt={project.title} className="feed-project-image" />
+                  <img src={projectImageUrls[index]} alt={`${project.title || 'Project'} screenshot`} className="feed-project-image" />
                 )}
                 <div className="feed-project-content">
                   <div className="feed-project-row">
