@@ -146,6 +146,32 @@ function FeedItem({ profile }: { profile: CandidateProfile }) {
         </section>
       )}
 
+      {(profile.certifications ?? []).length > 0 && (
+        <section className="feed-section">
+          <h3 className="feed-section-title">Certifications</h3>
+          <div className="feed-project-list">
+            {(profile.certifications ?? []).map((cert) => (
+              <article key={cert.id} className="feed-project-card">
+                <div className="feed-project-content">
+                  <div className="feed-project-row">
+                    <h4 className="feed-project-title">{cert.title || 'Untitled certification'}</h4>
+                  </div>
+                  <p className="feed-project-description">
+                    {[cert.issuer, cert.date].filter(Boolean).join(' • ') || 'No details yet.'}
+                  </p>
+                  {cert.credentialUrl && (
+                    <a href={cert.credentialUrl} target="_blank" rel="noopener noreferrer" className="feed-project-link">
+                      <ExternalLink size={12} />
+                      View credential
+                    </a>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
       {profile.skills.length > 0 && (
         <section className="feed-section">
           <h3 className="feed-section-title">Skills</h3>

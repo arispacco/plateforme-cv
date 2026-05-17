@@ -85,13 +85,9 @@ a:hover {
 .sidebar-logo-icon {
   width: 28px;
   height: 28px;
-  background: var(--color-primary);
-  color: #fff;
   border-radius: 7px;
-  display: grid;
-  place-items: center;
-  font-size: 14px;
-  font-weight: 800;
+  display: block;
+  object-fit: cover;
   flex-shrink: 0;
 }
 
@@ -1150,6 +1146,28 @@ a:hover {
   flex: 1;
 }
 
+.section-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.media-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-primary);
+  background: #EEF3FF;
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-right: auto;
+}
+
+.media-file-note {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 12.5px;
+}
+
 .hidden-input {
   display: none;
 }
@@ -1195,13 +1213,9 @@ a:hover {
 .preview-topnav-logo {
   width: 26px;
   height: 26px;
-  background: var(--color-primary);
-  color: #fff;
   border-radius: 6px;
-  display: grid;
-  place-items: center;
-  font-size: 13px;
-  font-weight: 800;
+  display: block;
+  object-fit: cover;
 }
 
 .preview-topnav-tabs {

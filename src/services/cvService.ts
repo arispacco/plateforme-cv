@@ -20,6 +20,17 @@ class CVDatabase extends Dexie {
           }
         });
       });
+    this.version(3)
+      .stores({
+        candidateProfiles: '++id,fullName,jobTitle',
+      })
+      .upgrade(async (tx) => {
+        await tx.table<CandidateProfile, number>('candidateProfiles').toCollection().modify((profile) => {
+          if (!profile.certifications) {
+            profile.certifications = [];
+          }
+        });
+      });
   }
 }
 

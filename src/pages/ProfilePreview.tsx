@@ -4,6 +4,7 @@ import { MapPin, Download, Edit2, Trash2, ExternalLink } from 'lucide-react';
 import { cvService } from '../services/cvService';
 import type { CandidateProfile } from '../types/cv';
 import { SkillBadge } from '../components/SkillTags';
+import vpitchLogo from '../assets/vpitch-logo.svg';
 
 export function ProfilePreview() {
   const { id } = useParams<{ id: string }>();
@@ -80,7 +81,7 @@ export function ProfilePreview() {
       {/* Top nav */}
       <header className="preview-topnav">
         <div className="preview-topnav-brand">
-          <span className="preview-topnav-logo">V</span>
+          <img src={vpitchLogo} alt="V-Pitch logo" className="preview-topnav-logo" />
           V-Pitch
         </div>
         <nav className="preview-topnav-tabs">
@@ -195,6 +196,32 @@ export function ProfilePreview() {
                             <p className="preview-timeline-desc">{exp.description}</p>
                           )}
                         </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {(profile.certifications ?? []).length > 0 && (
+                <div className="preview-cv-section">
+                  <h3 className="preview-cv-section-label">CERTIFICATIONS</h3>
+                  <div className="preview-projects">
+                    {(profile.certifications ?? []).map((cert) => (
+                      <div key={cert.id} className="preview-project-card">
+                        <h4 className="preview-project-title">{cert.title}</h4>
+                        {(cert.issuer || cert.date) && (
+                          <p className="preview-project-desc">{[cert.issuer, cert.date].filter(Boolean).join(' • ')}</p>
+                        )}
+                        {cert.credentialUrl && (
+                          <a
+                            href={cert.credentialUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="preview-project-link"
+                          >
+                            <ExternalLink size={12} /> View credential
+                          </a>
+                        )}
                       </div>
                     ))}
                   </div>

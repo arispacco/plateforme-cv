@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Save, Camera, Plus, X } from 'lucide-react';
 import { cvService } from '../services/cvService';
-import type { CandidateProfile, Experience, Project } from '../types/cv';
+import type { CandidateProfile, Certification, Experience, MediaPost, Project } from '../types/cv';
 import { SkillTags } from '../components/SkillTags';
 import { VideoUpload } from '../components/VideoUpload';
 
@@ -23,6 +23,21 @@ const createEmptyProject = (): Project => ({
   featured: false,
 });
 
+const createEmptyCertification = (): Certification => ({
+  id: crypto.randomUUID(),
+  title: '',
+  issuer: '',
+  date: '',
+  credentialUrl: '',
+});
+
+const createEmptyTextMediaPost = (): MediaPost => ({
+  id: crypto.randomUUID(),
+  type: 'text',
+  caption: '',
+  text: '',
+});
+
 const createEmptyProfile = (): CandidateProfile => ({
   fullName: '',
   jobTitle: '',
@@ -33,6 +48,8 @@ const createEmptyProfile = (): CandidateProfile => ({
   skills: [],
   experiences: [createEmptyExperience()],
   projects: [],
+  certifications: [],
+  mediaPosts: [],
 });
 
 export function EditProfile() {
@@ -43,6 +60,7 @@ export function EditProfile() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const mediaInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -56,6 +74,8 @@ export function EditProfile() {
             ...profile,
             experiences: profile.experiences.length ? profile.experiences : [createEmptyExperience()],
             projects: profile.projects ?? [],
+            certifications: profile.certifications ?? [],
+            mediaPosts: profile.mediaPosts ?? [],
           });
         } else {
           setDraft(createEmptyProfile());
@@ -123,6 +143,72 @@ export function EditProfile() {
     }));
   };
 
+  const setCertification = (certId: string, key: keyof Certification, value: string) => {
+    setDraft((d) => ({
+      ...d,
+      certifications: (d.certifications ?? []).map((c) =>
+        c.id === certId ? { ...c, [key]: value } : c,
+      ),
+    }));
+  };
+
+  const removeCertification = (certId: string) => {
+    setDraft((d) => ({
+      ...d,
+      certifications: (d.certifications ?? []).filter((c) => c.id !== certId),
+    }));
+  };
+
+  const setMediaCaption = (mediaId: string, caption: string) => {
+    setDraft((d) => ({
+      ...d,
+      mediaPosts: (d.mediaPosts ?? []).map((m) =>
+        m.id === mediaId ? { ...m, caption } : m,
+      ),
+    }));
+  };
+
+  const setMediaText = (mediaId: string, text: string) => {
+    setDraft((d) => ({
+      ...d,
+      mediaPosts: (d.mediaPosts ?? []).map((m) =>
+        m.id === mediaId && m.type === 'text' ? { ...m, text } : m,
+      ),
+    }));
+  };
+
+  const removeMediaPost = (mediaId: string) => {
+    setDraft((d) => ({
+      ...d,
+      mediaPosts: (d.mediaPosts ?? []).filter((m) => m.id !== mediaId),
+    }));
+  };
+
+  const addMediaFiles = (files: FileList | null) => {
+    if (!files?.length) return;
+    const nextMedia: MediaPost[] = [];
+    Array.from(files).forEach((file) => {
+      if (file.type.startsWith('image/')) {
+        nextMedia.push({
+          id: crypto.randomUUID(),
+          type: 'image',
+          caption: '',
+          blob: file,
+        });
+      } else if (file.type.startsWith('video/')) {
+        nextMedia.push({
+          id: crypto.randomUUID(),
+          type: 'video',
+          caption: '',
+          blob: file,
+        });
+      }
+    });
+    if (nextMedia.length) {
+      setDraft((d) => ({ ...d, mediaPosts: [...(d.mediaPosts ?? []), ...nextMedia] }));
+    }
+  };
+
   const onSave = async () => {
     setIsSaving(true);
     setError(null);
@@ -135,6 +221,13 @@ export function EditProfile() {
           (e) => e.title || e.company || e.description,
         ),
         projects: (draft.projects ?? []).filter((p) => p.title || p.description),
+        certifications: (draft.certifications ?? []).filter(
+          (c) => c.title || c.issuer || c.date || c.credentialUrl,
+        ),
+        mediaPosts: (draft.mediaPosts ?? []).filter((m) => {
+          if (m.type === 'text') return Boolean(m.text.trim());
+          return Boolean(m.blob);
+        }),
       };
       const saved = await cvService.saveCandidateProfile(profileToSave);
       navigate(`/profile/${saved.id}`);
@@ -202,6 +295,17 @@ export function EditProfile() {
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) set('photoBlob', file);
+            }}
+          />
+          <input
+            ref={mediaInputRef}
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            className="hidden-input"
+            onChange={(e) => {
+              addMediaFiles(e.target.files);
+              e.target.value = '';
             }}
           />
         </div>
@@ -432,6 +536,146 @@ export function EditProfile() {
                     placeholder="https://…"
                   />
                 </label>
+              </div>
+            ))}
+          </div>
+
+          {/* Certifications */}
+          <div className="form-section">
+            <div className="form-section-header">
+              <h3 className="form-section-title">Certifications</h3>
+              <button
+                type="button"
+                className="btn btn--outline-sm"
+                onClick={() =>
+                  setDraft((d) => ({
+                    ...d,
+                    certifications: [...(d.certifications ?? []), createEmptyCertification()],
+                  }))
+                }
+              >
+                <Plus size={14} /> Add
+              </button>
+            </div>
+            {(draft.certifications ?? []).map((cert) => (
+              <div key={cert.id} className="exp-card">
+                <div className="exp-card-header">
+                  <button
+                    type="button"
+                    className="exp-card-remove"
+                    onClick={() => removeCertification(cert.id)}
+                    aria-label="Remove certification"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+                <div className="form-row">
+                  <label className="form-label">
+                    Title
+                    <input
+                      className="form-input"
+                      value={cert.title}
+                      onChange={(e) => setCertification(cert.id, 'title', e.target.value)}
+                      placeholder="AWS Certified Developer"
+                    />
+                  </label>
+                  <label className="form-label">
+                    Issuer
+                    <input
+                      className="form-input"
+                      value={cert.issuer ?? ''}
+                      onChange={(e) => setCertification(cert.id, 'issuer', e.target.value)}
+                      placeholder="Amazon Web Services"
+                    />
+                  </label>
+                </div>
+                <div className="form-row">
+                  <label className="form-label">
+                    Date
+                    <input
+                      className="form-input"
+                      value={cert.date ?? ''}
+                      onChange={(e) => setCertification(cert.id, 'date', e.target.value)}
+                      placeholder="2026"
+                    />
+                  </label>
+                  <label className="form-label">
+                    Credential URL
+                    <input
+                      className="form-input"
+                      value={cert.credentialUrl ?? ''}
+                      onChange={(e) => setCertification(cert.id, 'credentialUrl', e.target.value)}
+                      placeholder="https://…"
+                    />
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Media Updates */}
+          <div className="form-section">
+            <div className="form-section-header">
+              <h3 className="form-section-title">Media Updates</h3>
+              <div className="section-actions">
+                <button
+                  type="button"
+                  className="btn btn--outline-sm"
+                  onClick={() =>
+                    setDraft((d) => ({
+                      ...d,
+                      mediaPosts: [...(d.mediaPosts ?? []), createEmptyTextMediaPost()],
+                    }))
+                  }
+                >
+                  <Plus size={14} /> Text
+                </button>
+                <button
+                  type="button"
+                  className="btn btn--outline-sm"
+                  onClick={() => mediaInputRef.current?.click()}
+                >
+                  <Plus size={14} /> Image/Video
+                </button>
+              </div>
+            </div>
+
+            {(draft.mediaPosts ?? []).map((media) => (
+              <div key={media.id} className="exp-card">
+                <div className="exp-card-header">
+                  <span className="media-badge">{media.type.toUpperCase()}</span>
+                  <button
+                    type="button"
+                    className="exp-card-remove"
+                    onClick={() => removeMediaPost(media.id)}
+                    aria-label="Remove media post"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+                <label className="form-label">
+                  Caption
+                  <input
+                    className="form-input"
+                    value={media.caption ?? ''}
+                    onChange={(e) => setMediaCaption(media.id, e.target.value)}
+                    placeholder="Write a short caption…"
+                  />
+                </label>
+                {media.type === 'text' ? (
+                  <label className="form-label">
+                    Text
+                    <textarea
+                      className="form-input form-textarea"
+                      value={media.text}
+                      onChange={(e) => setMediaText(media.id, e.target.value)}
+                      placeholder="Share an update…"
+                      rows={3}
+                    />
+                  </label>
+                ) : (
+                  <p className="media-file-note">File attached ({media.type}).</p>
+                )}
               </div>
             ))}
           </div>

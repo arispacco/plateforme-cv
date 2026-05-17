@@ -1,5 +1,6 @@
 import { LayoutDashboard, Users, Settings, User, CreditCard } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import vpitchLogo from '../assets/vpitch-logo.svg';
 
 export function Sidebar() {
   const location = useLocation();
@@ -7,7 +8,7 @@ export function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-        <span className="sidebar-logo-icon">V</span>
+        <img src={vpitchLogo} alt="V-Pitch logo" className="sidebar-logo-icon" />
         <span className="sidebar-logo-text">V-Pitch</span>
       </div>
 
