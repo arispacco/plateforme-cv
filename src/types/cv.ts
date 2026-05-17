@@ -14,6 +14,7 @@ export interface Project {
   featured?: boolean;
   link?: string;
   screenshotBlob?: Blob;
+  mediaUrl?: string;
 }
 
 export interface Certification {
@@ -22,6 +23,7 @@ export interface Certification {
   issuer?: string;
   date?: string;
   credentialUrl?: string;
+  mediaBlob?: Blob;
 }
 
 export interface VideoMediaPost {
@@ -48,13 +50,15 @@ export interface TextMediaPost {
 export type MediaPost = VideoMediaPost | ImageMediaPost | TextMediaPost;
 
 export interface CandidateProfile {
-  id?: number; // Primary key, auto-incremented by Dexie
+  id?: number;
+  userId?: string;
   fullName: string;
   jobTitle: string;
   bio?: string;
   location?: string;
   availability?: string;
   rating?: number;
+  stars?: number;
   skills: string[];
   experiences: Experience[];
   projects?: Project[];

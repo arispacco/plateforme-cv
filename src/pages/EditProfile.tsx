@@ -29,6 +29,7 @@ const createEmptyCertification = (): Certification => ({
   issuer: '',
   date: '',
   credentialUrl: '',
+  mediaBlob: undefined,
 });
 
 const createEmptyTextMediaPost = (): MediaPost => ({
@@ -152,7 +153,16 @@ export function EditProfile() {
     }));
   };
 
-  const removeCertification = (certId: string) => {
+  
+  const setCertificationMedia = (certId: string, file: File | null) => {
+    setDraft((d) => ({
+      ...d,
+      certifications: (d.certifications ?? []).map((c) =>
+        c.id === certId ? { ...c, mediaBlob: file || undefined } : c,
+      ),
+    }));
+  };
+const removeCertification = (certId: string) => {
     setDraft((d) => ({
       ...d,
       certifications: (d.certifications ?? []).filter((c) => c.id !== certId),
@@ -209,7 +219,28 @@ export function EditProfile() {
     }
   };
 
-  const onSave = async () => {
+  
+  const handleImportJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string);
+        // Basic validation
+        if (json && json.fullName) {
+          setDraft(d => ({ ...d, ...json, id: d.id, userId: d.userId }));
+        } else {
+          alert('Invalid profile JSON');
+        }
+      } catch (err) {
+        alert('Error parsing JSON');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+const onSave = async () => {
     setIsSaving(true);
     setError(null);
     try {
@@ -608,6 +639,16 @@ export function EditProfile() {
                       placeholder="https://…"
                     />
                   </label>
+                  <label className="form-label">
+                    Certificate File (Image/PDF)
+                    <input
+                      type="file"
+                      className="form-input"
+                      accept="image/*,.pdf"
+                      onChange={(e) => setCertificationMedia(cert.id, e.target.files?.[0] || null)}
+                    />
+                    {cert.mediaBlob && <span className="media-badge" style={{marginTop: 8, display: 'inline-block'}}>File attached</span>}
+                  </label>
                 </div>
               </div>
             ))}
@@ -683,6 +724,14 @@ export function EditProfile() {
       </div>
 
       <div className="edit-profile-footer">
+        
+
+
+            
+        <label className="btn btn--outline" style={{cursor: 'pointer'}}>
+          Import JSON
+          <input type="file" accept=".json" style={{display: 'none'}} onChange={handleImportJson} />
+        </label>
         <button type="button" className="btn btn--primary" onClick={onSave} disabled={isSaving}>
           <Save size={16} /> {isSaving ? 'Saving…' : 'Save Changes'}
         </button>

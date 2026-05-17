@@ -1,0 +1,69 @@
+{
+  "fullName": "Aristide Bienvenu",
+  "jobTitle": "Développeur Full Stack & Designer",
+  "bio": "Passionné par la création d'applications web performantes et d'interfaces utilisateur intuitives. J'aime résoudre des problèmes complexes et apprendre de nouvelles technologies.",
+  "location": "Yaoundé, Cameroun",
+  "availability": "Disponible immédiatement",
+  "rating": 4.8,
+  "stars": 5,
+  "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Node.js",
+    "HTML",
+    "CSS",
+    "Python",
+    "Django",
+    "Docker",
+    "Git",
+    "Figma",
+    "C++",
+    "C#",
+    ".NET",
+    "Flutter"
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "title": "Ingénieur Logiciel Lead",
+      "company": "Tech Innovators",
+      "startDate": "Jan 2023",
+      "endDate": "Présent",
+      "description": "Développement et maintenance d'une plateforme SaaS avec React et Node.js. Mise en place de pipelines CI/CD et mentorat des développeurs juniors."
+    },
+    {
+      "id": "exp-2",
+      "title": "Développeur Web Front-End",
+      "company": "Creative Agency",
+      "startDate": "Fév 2021",
+      "endDate": "Déc 2022",
+      "description": "Création d'interfaces web réactives et accessibles. Collaboration étroite avec les designers pour implémenter des maquettes Figma."
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "V-Pitch (Plateforme de CV Vidéo)",
+      "description": "Un réseau social professionnel pour talents permettant de se démarquer grâce à des vidéos de présentation et un portfolio riche.",
+      "featured": true,
+      "link": "https://github.com/arispacco/plateforme-cv"
+    },
+    {
+      "id": "proj-2",
+      "title": "E-commerce Dashboard",
+      "description": "Tableau de bord analytique complet avec des graphiques en temps réel et gestion des stocks.",
+      "featured": false,
+      "link": ""
+    }
+  ],
+  "certifications": [
+    {
+      "id": "cert-1",
+      "title": "AWS Certified Solutions Architect",
+      "issuer": "Amazon Web Services",
+      "date": "2024",
+      "credentialUrl": "https://aws.amazon.com/certification/"
+    }
+  ]
+}

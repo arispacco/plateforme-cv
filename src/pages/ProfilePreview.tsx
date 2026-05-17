@@ -6,6 +6,41 @@ import type { CandidateProfile } from '../types/cv';
 import { SkillBadge } from '../components/SkillTags';
 import vpitchLogo from '../assets/vpitch-logo.svg';
 
+
+const getDeviconClass = (skill: string) => {
+  const s = skill.toLowerCase();
+  if (s.includes('react')) return 'devicon-react-original colored';
+  if (s.includes('node')) return 'devicon-nodejs-plain colored';
+  if (s.includes('js') || s.includes('javascript')) return 'devicon-javascript-plain colored';
+  if (s.includes('ts') || s.includes('typescript')) return 'devicon-typescript-plain colored';
+  if (s.includes('html')) return 'devicon-html5-plain colored';
+  if (s.includes('css')) return 'devicon-css3-plain colored';
+  if (s.includes('python')) return 'devicon-python-plain colored';
+  if (s.includes('java') && !s.includes('script')) return 'devicon-java-plain colored';
+  if (s.includes('git')) return 'devicon-git-plain colored';
+  if (s.includes('docker')) return 'devicon-docker-plain colored';
+  if (s.includes('aws')) return 'devicon-amazonwebservices-plain-wordmark colored';
+  if (s.includes('figma')) return 'devicon-figma-plain colored';
+  if (s.includes('vue')) return 'devicon-vuejs-plain colored';
+  if (s.includes('angular')) return 'devicon-angularjs-plain colored';
+  if (s.includes('sql') || s.includes('postgres')) return 'devicon-postgresql-plain colored';
+  if (s.includes('mongo')) return 'devicon-mongodb-plain colored';
+  if (s.includes('c++') || s === 'cpp') return 'devicon-cplusplus-plain colored';
+  if (s.includes('c#') || s === 'csharp') return 'devicon-csharp-plain colored';
+  if (s === 'c') return 'devicon-c-plain colored';
+  if (s.includes('.net') || s.includes('dotnet')) return 'devicon-dot-net-plain-wordmark colored';
+  if (s.includes('django')) return 'devicon-django-plain colored';
+  if (s.includes('flutter')) return 'devicon-flutter-plain colored';
+  if (s.includes('php')) return 'devicon-php-plain colored';
+  if (s.includes('ruby')) return 'devicon-ruby-plain colored';
+  if (s.includes('go') || s.includes('golang')) return 'devicon-go-plain colored';
+  if (s.includes('rust')) return 'devicon-rust-plain colored';
+  if (s.includes('swift')) return 'devicon-swift-plain colored';
+  if (s.includes('kotlin')) return 'devicon-kotlin-plain colored';
+  if (s.includes('laravel')) return 'devicon-laravel-plain colored';
+  if (s.includes('spring')) return 'devicon-spring-plain colored';
+  return null;
+};
 export function ProfilePreview() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -80,10 +115,10 @@ export function ProfilePreview() {
     <div className="preview-page">
       {/* Top nav */}
       <header className="preview-topnav">
-        <div className="preview-topnav-brand">
+        <Link to="/" className="preview-topnav-brand" style={{textDecoration: 'none', color: 'inherit'}}>
           <img src={vpitchLogo} alt="V-Pitch logo" className="preview-topnav-logo" />
           V-Pitch
-        </div>
+        </Link>
         <nav className="preview-topnav-tabs">
           <button
             type="button"
@@ -222,6 +257,17 @@ export function ProfilePreview() {
                             <ExternalLink size={12} /> View credential
                           </a>
                         )}
+                        {cert.mediaBlob && (
+                          <div style={{marginTop: 12}}>
+                            {cert.mediaBlob.type.startsWith('image/') ? (
+                              <img src={URL.createObjectURL(cert.mediaBlob)} alt={cert.title} className="cert-media-preview" />
+                            ) : (
+                              <a href={URL.createObjectURL(cert.mediaBlob)} target="_blank" rel="noopener noreferrer" className="btn btn--outline-sm">
+                                <ExternalLink size={14} /> View Certificate File
+                              </a>
+                            )}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -230,37 +276,125 @@ export function ProfilePreview() {
             </>
           )}
 
-          {activeTab === 'portfolio' && (
-            <>
-              {(profile.projects ?? []).length > 0 ? (
-                <div className="preview-cv-section">
-                  <h3 className="preview-cv-section-label">PROJECTS</h3>
-                  <div className="preview-projects">
-                    {(profile.projects ?? []).map((proj) => (
-                      <div key={proj.id} className="preview-project-card">
-                        {proj.featured && (
-                          <span className="preview-project-featured">Featured</span>
+                    {activeTab === 'portfolio' && (
+            <div className="portfolio-container">
+              <h2 className="portfolio-header">My Professional Showcase</h2>
+
+              {profile.skills.length > 0 && (
+                <div style={{marginBottom: 48}}>
+                  <span className="section-badge">Tech Stack</span>
+                  <div className="portfolio-skills-grid">
+                    {profile.skills.map((skill) => {
+                      const iconClass = getDeviconClass(skill);
+                      return (
+                        <div key={skill} className="portfolio-skill-card">
+                          {iconClass ? (
+                            <i className={iconClass + ' portfolio-skill-icon'}></i>
+                          ) : (
+                            <div className="portfolio-skill-icon" style={{color: '#ccc', fontSize: 24, fontWeight: 'bold'}}>{skill[0].toUpperCase()}</div>
+                          )}
+                          <span className="portfolio-skill-name">{skill}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              
+              {(profile.mediaPosts ?? []).filter(m => m.type !== 'text' || (m.type === 'text' && m.text)).length > 0 && (
+                <div style={{marginBottom: 48}}>
+                  <span className="section-badge">Media Gallery</span>
+                  <div className="portfolio-grid">
+                    {(profile.mediaPosts ?? []).map((media) => (
+                      <div key={media.id} className="portfolio-item-card">
+                        {media.type === 'image' && media.blob && (
+                          <img src={URL.createObjectURL(media.blob)} alt={media.caption || 'Media'} className="portfolio-item-media" style={{height: 200, objectFit: 'cover'}} />
                         )}
-                        <h4 className="preview-project-title">{proj.title}</h4>
-                        <p className="preview-project-desc">{proj.description}</p>
-                        {proj.link && (
-                          <a
-                            href={proj.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="preview-project-link"
-                          >
-                            <ExternalLink size={12} /> Featured project →
-                          </a>
+                        {media.type === 'video' && media.blob && (
+                          <video src={URL.createObjectURL(media.blob)} controls className="portfolio-item-media" style={{height: 200, objectFit: 'cover', background: '#000'}} />
+                        )}
+                        {media.type === 'text' && (
+                          <div className="portfolio-item-media" style={{height: 200, padding: 16, background: '#f8f9fa', overflowY: 'auto'}}>
+                            {media.text}
+                          </div>
+                        )}
+                        {media.caption && (
+                          <div className="portfolio-item-body" style={{padding: '12px 20px', flex: 'none'}}>
+                            <p className="portfolio-item-desc" style={{margin: 0}}>{media.caption}</p>
+                          </div>
                         )}
                       </div>
                     ))}
                   </div>
                 </div>
-              ) : (
-                <p className="preview-empty">No projects added yet.</p>
               )}
-            </>
+
+              {(profile.projects ?? []).length > 0 && (
+                <div style={{marginBottom: 48}}>
+                  <span className="section-badge">Featured Projects</span>
+                  <div className="portfolio-grid">
+                    {(profile.projects ?? []).map((proj) => (
+                      <div key={proj.id} className="portfolio-item-card">
+                        {proj.screenshotBlob && (
+                          <img src={URL.createObjectURL(proj.screenshotBlob)} alt={proj.title} className="portfolio-item-media" />
+                        )}
+                        <div className="portfolio-item-body">
+                          <h4 className="portfolio-item-title">{proj.title}</h4>
+                          <p className="portfolio-item-desc">{proj.description}</p>
+                          {proj.link && (
+                            <a href={proj.link} target="_blank" rel="noopener noreferrer" className="portfolio-item-link">
+                              <ExternalLink size={16} /> Open Project
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {(profile.certifications ?? []).length > 0 && (
+                <div>
+                  <span className="section-badge">Certifications & Awards</span>
+                  <div className="portfolio-grid">
+                    {(profile.certifications ?? []).map((cert) => (
+                      <div key={cert.id} className="portfolio-item-card">
+                        {cert.mediaBlob && cert.mediaBlob.type.startsWith('image/') ? (
+                          <img src={URL.createObjectURL(cert.mediaBlob)} alt={cert.title} className="portfolio-item-media" style={{objectFit: 'contain', background: '#fff'}} />
+                        ) : (
+                          <div className="portfolio-item-media" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eef2ff'}}>
+                            <ExternalLink size={40} color="var(--color-primary)" opacity={0.5} />
+                          </div>
+                        )}
+                        <div className="portfolio-item-body">
+                          <h4 className="portfolio-item-title">{cert.title}</h4>
+                          <p className="portfolio-item-desc">
+                            {[cert.issuer, cert.date].filter(Boolean).join(' • ')}
+                          </p>
+                          <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
+                            {cert.credentialUrl && (
+                              <a href={cert.credentialUrl} target="_blank" rel="noopener noreferrer" className="portfolio-item-link">
+                                <ExternalLink size={16} /> Verify
+                              </a>
+                            )}
+                            {cert.mediaBlob && !cert.mediaBlob.type.startsWith('image/') && (
+                              <a href={URL.createObjectURL(cert.mediaBlob)} target="_blank" rel="noopener noreferrer" className="portfolio-item-link">
+                                <Download size={16} /> View Document
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {profile.projects?.length === 0 && profile.certifications?.length === 0 && (
+                <p className="preview-empty">This portfolio is currently empty. Add projects and certifications to showcase your work.</p>
+              )}
+            </div>
           )}
         </div>
       </div>
