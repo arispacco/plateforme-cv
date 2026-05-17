@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Settings, User, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, User } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import vpitchLogo from '../assets/vpitch-logo.svg';
 
@@ -7,10 +7,10 @@ export function Sidebar() {
 
   return (
     <aside className="sidebar">
-      <div className="sidebar-logo">
+      <Link to="/" className="sidebar-logo" style={{textDecoration: 'none', color: 'inherit'}}>
         <img src={vpitchLogo} alt="V-Pitch logo" className="sidebar-logo-icon" />
         <span className="sidebar-logo-text">V-Pitch</span>
-      </div>
+      </Link>
 
       <nav className="sidebar-nav">
         <Link to="/" className={`sidebar-item ${location.pathname === '/' ? 'active' : ''}`}>
@@ -39,13 +39,7 @@ export function Sidebar() {
               <User size={16} />
               <span>Profile</span>
             </Link>
-            <Link
-              to="/account"
-              className={`sidebar-item sidebar-item--child ${location.pathname === '/account' ? 'active' : ''}`}
-            >
-              <CreditCard size={16} />
-              <span>Account</span>
-            </Link>
+            
           </div>
         </div>
       </nav>
