@@ -16,6 +16,14 @@ export interface Project {
   screenshotBlob?: Blob;
 }
 
+export interface Certification {
+  id: string;
+  title: string;
+  issuer?: string;
+  date?: string;
+  credentialUrl?: string;
+}
+
 export interface VideoMediaPost {
   id: string;
   type: 'video';
@@ -50,6 +58,7 @@ export interface CandidateProfile {
   skills: string[];
   experiences: Experience[];
   projects?: Project[];
+  certifications?: Certification[];
   mediaPosts?: MediaPost[];
   photoBlob?: Blob;
   vPitchBlob?: Blob;
