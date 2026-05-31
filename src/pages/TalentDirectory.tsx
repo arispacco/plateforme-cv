@@ -207,39 +207,40 @@ export function TalentDirectory({ isFeed = true }: { isFeed?: boolean }) {
           />
         </div>
 
-        <div className="directory-filters">
-          
-          <div className="filter-select-wrap" style={{marginRight: 16}}>
-            <select
-              className="filter-select"
-              value={sortFilter}
-              onChange={(e) => setSortFilter(e.target.value)}
-            >
-              <option value="recent">Plus récents</option>
-              <option value="stars">Plus d'étoiles</option>
-              <option value="stars_3">+ de 3 étoiles</option>
-              <option value="skills">Plus de compétences</option>
-            </select>
-            <ChevronDown size={14} className="filter-select-chevron" />
+        {!isFeed && (
+          <div className="directory-filters">
+            <div className="filter-select-wrap" style={{ marginRight: 16 }}>
+              <select
+                className="filter-select"
+                value={sortFilter}
+                onChange={(e) => setSortFilter(e.target.value)}
+              >
+                <option value="recent">Plus récents</option>
+                <option value="stars">Plus d'étoiles</option>
+                <option value="stars_3">+ de 3 étoiles</option>
+                <option value="skills">Plus de compétences</option>
+              </select>
+              <ChevronDown size={14} className="filter-select-chevron" />
+            </div>
+            <div className="filter-select-wrap">
+              <select
+                className="filter-select"
+                value={skillFilter}
+                onChange={(e) => {
+                  setSkillFilter(e.target.value);
+                }}
+              >
+                <option value="">Filter by Skills</option>
+                {allSkills.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={14} className="filter-select-chevron" />
+            </div>
           </div>
-<div className="filter-select-wrap">
-            <select
-              className="filter-select"
-              value={skillFilter}
-              onChange={(e) => {
-                setSkillFilter(e.target.value);
-              }}
-            >
-              <option value="">Filter by Skills</option>
-              {allSkills.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-            <ChevronDown size={14} className="filter-select-chevron" />
-          </div>
-        </div>
+        )}
       </div>
 
       <div className="directory-header">
